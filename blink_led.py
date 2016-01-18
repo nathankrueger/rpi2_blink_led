@@ -4,23 +4,23 @@ import RPi.GPIO as GPIO
 import time
 import argparse
 
-RED_LED = 20
-GREEN_LED = 26
-BLUE_LED = 21
+RED_LED_PIN = 20
+GREEN_LED_PIN = 26
+BLUE_LED_PIN = 21
 
 # Setup and teardown
 def setup():
 	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(RED_LED, GPIO.OUT)
-	GPIO.setup(GREEN_LED, GPIO.OUT)
-	GPIO.setup(BLUE_LED, GPIO.OUT)
+	GPIO.setup(RED_LED_PIN, GPIO.OUT)
+	GPIO.setup(GREEN_LED_PIN, GPIO.OUT)
+	GPIO.setup(BLUE_LED_PIN, GPIO.OUT)
 
 def cleanup():
 	GPIO.cleanup()
 
 # Red LED
 def redLED(val):
-	GPIO.output(RED_LED, val)
+	GPIO.output(RED_LED_PIN, val)
 
 def redOn():
 	redLED(1)
@@ -30,7 +30,7 @@ def redOff():
 
 # Green LED
 def greenLED(val):
-	GPIO.output(GREEN_LED, val)
+	GPIO.output(GREEN_LED_PIN, val)
 
 def greenOn():
 	greenLED(1)
@@ -40,7 +40,7 @@ def greenOff():
 
 # Blue LED
 def blueLED(val):
-	GPIO.output(BLUE_LED, val)
+	GPIO.output(BLUE_LED_PIN, val)
 
 def blueOn():
 	blueLED(1)
