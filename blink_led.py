@@ -7,6 +7,7 @@ import argparse
 RED_LED_PIN = 20
 GREEN_LED_PIN = 26
 BLUE_LED_PIN = 21
+INPUT_PIN = 19
 
 # Setup and teardown
 def setup():
@@ -15,6 +16,7 @@ def setup():
 	GPIO.setup(RED_LED_PIN, GPIO.OUT)
 	GPIO.setup(GREEN_LED_PIN, GPIO.OUT)
 	GPIO.setup(BLUE_LED_PIN, GPIO.OUT)
+	GPIO.setup(INPUT_PIN, GPIO.IN)
 
 def cleanup():
 	GPIO.cleanup()
@@ -49,6 +51,31 @@ def blueOn():
 def blueOff():
 	blueLED(0)
 
+# Inputs
+def getInputPinVal(pin):
+	ret_val = None
+	pin_int = int(pin)
+	try:
+		ret_val = GPIO.input(pin_int)
+	except Exception as err:
+		print err
+		ret_val = 'X'
+
+	return ret_val
+
+def getInputPinValOnce(pin):
+	ret_val = None
+	pin_int = int(pin)
+	try:
+		GPIO.setup(pin_int, GPIO.IN)
+		ret_val = getInputPinVal(pin_int)
+		GPIO.cleanup(pin_int)
+	except Exception as err:
+		print err
+		ret_val = 'X'
+
+	return ret_val
+
 # Multiple LEDs
 def allOff():
 	redOff()
@@ -75,6 +102,7 @@ def getArgs():
 	parser.add_argument('--blue', type=str, choices=['0','1'], help='Turn on / off the blue LED.')
 	parser.add_argument('--off', action='store_true', help='Turn all LEDs off.')
 	parser.add_argument('--cleanup', action='store_true', help='Cleanup LED pin state upon exiting.')
+	parser.add_argument('--read_input', type=str, help='Read from an input pin.')
 
 	return parser.parse_args()
 
@@ -111,6 +139,10 @@ def main():
 
 	if args.off:
 		allOff()
+
+	# Read an input pin
+	if args.read_input:
+		print getInputPinValOnce(args.read_input)
 
 	if args.cleanup:
 		cleanup()
