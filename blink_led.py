@@ -10,6 +10,7 @@ BLUE_LED_PIN = 21
 
 # Setup and teardown
 def setup():
+	GPIO.setwarnings(False)
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(RED_LED_PIN, GPIO.OUT)
 	GPIO.setup(GREEN_LED_PIN, GPIO.OUT)
@@ -69,6 +70,11 @@ def cycleRGB(rate):
 def getArgs():
 	parser = argparse.ArgumentParser(description='Control an RGB LED via GPIO on a Raspberry Pi 2.')
 	parser.add_argument('--cycle_rgb', type=int, help='Cycle through Red, Green, and Blue at a specified rate.')
+	parser.add_argument('--red', type=str, choices=['0','1'], help='Turn on / off the red LED.')
+	parser.add_argument('--green', type=str, choices=['0','1'], help='Turn on / off the green LED.')
+	parser.add_argument('--blue', type=str, choices=['0','1'], help='Turn on / off the blue LED.')
+	parser.add_argument('--off', action='store_true', help='Turn all LEDs off.')
+	parser.add_argument('--cleanup', action='store_true', help='Cleanup LED pin state upon exiting.')
 
 	return parser.parse_args()
 
@@ -82,7 +88,32 @@ def main():
 			rate = args.cycle_rgb
 		cycleRGB(rate)
 
-	cleanup()
+	# Control Red
+	if args.red:
+		if args.red == '0':
+			redOff()
+		elif args.red == '1':
+			redOn()
+
+	# Control Green
+	if args.green:
+		if args.green == '0':
+			greenOff()
+		elif args.green == '1':
+			greenOn()
+
+	# Control Blue
+	if args.blue:
+		if args.blue == '0':
+			blueOff()
+		elif args.blue == '1':
+			blueOn()
+
+	if args.off:
+		allOff()
+
+	if args.cleanup:
+		cleanup()
 
 if __name__ == '__main__':
 	main()
