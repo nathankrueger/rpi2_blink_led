@@ -50,6 +50,29 @@ def blueOn():
 def blueOff():
 	blueLED(0)
 
+# Outputs
+def setOutput(val, pin):
+	# This may be dangerous, if for example the pin is configured as an input...
+	if GPIO.gpio_function(pin) != GPIO.OUT:
+		GPIO.setup(pin, GPIO.OUT)
+	GPIO.output(pin, val)
+
+def highOutputPulse(pin, period_ms):
+	pin_i = int(pin)
+	period_ms_f = float(period_ms)
+
+	# This may be dangerous, if for example the pin is configured as an input...
+	GPIO.setup(pin_i, GPIO.OUT)
+	GPIO.output(pin_i, 1)
+	time.sleep(period_ms_f)
+	GPIO.output(pin_i, 0)
+
+def handlePulse(pulse_args):
+	arg_list = pulse_args.split(',')
+	pin = arg_list[0]
+	period_ms = arg_list[1]
+	highOutputPulse(pin, period_ms)
+	
 # Inputs
 def getInputPinVal(pin):
 	ret_val = None
@@ -115,12 +138,16 @@ def getArgs():
 	parser.add_argument('--off', action='store_true', help='Turn all LEDs off.')
 	parser.add_argument('--cleanup', action='store_true', help='Cleanup LED pin state upon exiting.')
 	parser.add_argument('--read_input', type=str, help='Read from an input pin.')
+	parser.add_argument('--pulse_output', type=str, help='Send a high output pulse to an input pin.')
 
 	return parser.parse_args()
 
 def main():
 	setup()
 	args = getArgs()
+
+	if args.pulse_output:
+		handlePulse(args.pulse_output)
 
 	if args.cycle_rgb:
 		rate = 2 # The default pin cycling rate.
